@@ -10,6 +10,7 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { NgxGalleryModule } from '@kolkov/ngx-gallery';
 import { FileUploadModule } from 'ng2-file-upload';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
+import { TimeagoModule, TimeagoClock } from 'ngx-timeago';
 
 
 
@@ -34,12 +35,21 @@ import { UserService } from './_services/user.service';
 import { AuthGuard } from './_guards/auth.guard';
 import { PreventUnsavedChanges } from './_guards/prevent-unsaved-changes.guard';
 import { PhotoEditorComponent } from './members/photo-editor/photo-editor.component';
-import { TimeagoModule } from 'ngx-timeago';
 import { ListsResolver } from './_resolvers/lists.resolver';
+import { Observable, interval } from 'rxjs';
+import { MessagesResolver } from './_resolvers/message.resolver.';
+import { MemberMessagesComponent } from './members/member-messages/member-messages.component';
 
 export function tokenGetter() {
    return localStorage.getItem('token');
 }
+
+export class MyClock extends TimeagoClock {
+   tick(then: number): Observable<number> {
+     return interval(10000);
+   }
+ }
+
 
 @Injectable()
 export class CustomHammerConfig extends HammerGestureConfig  {
@@ -62,7 +72,8 @@ export class CustomHammerConfig extends HammerGestureConfig  {
       MemberCardComponent,
       MemberDetailComponent,
       MemberEditComponent,
-      PhotoEditorComponent
+      PhotoEditorComponent,
+      MemberMessagesComponent
   ],
    imports: [
       BrowserAnimationsModule,
@@ -72,11 +83,13 @@ export class CustomHammerConfig extends HammerGestureConfig  {
       HttpClientModule,
       FormsModule,
       ReactiveFormsModule,
+      TimeagoModule.forRoot({
+         clock: {provide: TimeagoClock, useClass: MyClock}
+             }),
       TabsModule.forRoot(),
       ButtonsModule.forRoot(),
       PaginationModule.forRoot(),
       RouterModule.forRoot(appRoutes),
-      TimeagoModule.forRoot(),
       NgxGalleryModule,
       FileUploadModule,
       JwtModule.forRoot({
@@ -97,6 +110,7 @@ export class CustomHammerConfig extends HammerGestureConfig  {
       MemberListResolver,
       MemberEditResolver,
       ListsResolver,
+      MessagesResolver,
       PreventUnsavedChanges,
       { provide: HAMMER_GESTURE_CONFIG, useClass: CustomHammerConfig }
    ],

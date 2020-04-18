@@ -15,7 +15,7 @@ export class ListsComponent implements OnInit {
 
   users: User[];
   pagination: Pagination;
-  likesParam: string; 
+  likesParam: string;
 
   constructor(private authService: AuthService,
               private userService: UserService,
